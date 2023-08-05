@@ -18,10 +18,17 @@ const RegisterForm = ({ isOpen, onRequestClose, onRegister, onLogin, isLogin }) 
     onLogin(email, password);
   };
 
+  const handleClose = () => {
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    onRequestClose();
+  }
+
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
+      onRequestClose={handleClose}
       className="modal"
     >
       <h2>{isLogin ? 'Login' : 'Register New User'}</h2>
@@ -59,7 +66,7 @@ const RegisterForm = ({ isOpen, onRequestClose, onRegister, onLogin, isLogin }) 
           <button type="button" onClick={isLogin ? handleLogin : handleRegister}>
             {isLogin ? 'Login' : 'Register'}
           </button>
-          <button type="button" onClick={onRequestClose}>
+          <button type="button" onClick={handleClose}>
             Cancel
           </button>
         </div>

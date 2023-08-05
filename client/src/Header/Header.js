@@ -6,9 +6,9 @@ const Header = () => {
   const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
-  const handleRegister = (formData) => {
+  const handleRegister = (username, email, password) => {
     // Implement the registration logic here or call an API to register the user
-    console.log('Registering user:', formData);
+    console.log('Registering user:', username, email, password);
   };
 
   const handleLogin = (email, password) => {
@@ -27,10 +27,6 @@ const Header = () => {
   return (
     <header className="header">
       <div><h1>Store Management</h1></div>
-      <div className="button-container">
-        <button className="login-button" onClick={() => setLoginModalOpen(true)}>Login</button>
-        <button className="register-button" onClick={() => setRegisterModalOpen(true)}>Register</button>
-      </div>
       <RegisterForm
         isOpen={isRegisterModalOpen || isLoginModalOpen}
         onRequestClose={handleModalClose}
