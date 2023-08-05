@@ -10,7 +10,7 @@ const RegisterForm = ({ isOpen, onRequestClose, onRegister, onLogin, isLogin }) 
 
   const handleRegister = () => {
     // Handle registration logic here
-    onRegister(username, email, password);
+    onRegister({username, email, password});
   };
 
   const handleLogin = () => {

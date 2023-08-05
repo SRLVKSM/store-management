@@ -3,12 +3,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors({ origin: '*' }));
 
 // Connect to MongoDB
 const dbURI = 'mongodb://localhost:27017';
