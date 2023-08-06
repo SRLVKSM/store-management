@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Header from '../Header';
 import Body from "../Body";
 import RegisterForm from "../RegisterForm";
@@ -11,14 +11,7 @@ const App = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({});
 
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return;
-    setIsLoggedIn(true);
-    getUserInfo();
-  }, []);
-
-  const getUserInfo = () => {
+  const getUserInfo = useCallback(() => {
     getUser(localStorage.getItem("jwt"))
       .then(({ data: { user } }) => {
         setUserInfo(user);
@@ -27,8 +20,15 @@ const App = () => {
         console.log(err?.response?.data?.message);
         doLogout();
         alert(`Unable to fetch user info: ${err?.response?.data?.message}`);
-      });
-  };
+      })
+  }, []);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return;
+    setIsLoggedIn(true);
+    getUserInfo();
+  }, [getUserInfo]);
 
   const handleRegistration = (userData, apiToCall = registerUser) => {
     apiToCall(userData)
