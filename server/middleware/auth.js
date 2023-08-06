@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
       req.user = decoded.userId; // Attach the user ID to the request
       next();
     } catch (err) {
-      res.status(401).json({ message: 'Token is not valid' });
+      res.status(401).json({ message: 'Token is not valid', err });
     }
   } else {
     // Authorization header is missing or doesn't start with 'Bearer '

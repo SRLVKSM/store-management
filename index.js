@@ -22,11 +22,14 @@ mongoose
 // Routes
 const authMiddleware = require('./server/middleware/auth');
 const userRoutes = require('./server/routes/userRoute');
+const userInfoRoutes = require('./server/routes/userInfoRoute');
 const storeItemRoutes = require('./server/routes/storeRoute');
 
 app.use('/api/store-items', authMiddleware);
+app.use('/api/user-info', authMiddleware);
 
 app.use('/api/users', userRoutes);
+app.use('/api/user-info', userInfoRoutes);
 app.use('/api/store-items', storeItemRoutes);
 
 // Define the port for the server

@@ -3,17 +3,32 @@ import Header from '../Header';
 import Body from "../Body";
 import RegisterForm from "../RegisterForm";
 import './App.css';
-import { loginUser, registerUser } from '../actions';
+import { getUser, loginUser, registerUser } from '../actions';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    if (jwt) setIsLoggedIn(true);
-  }, [])
+    if (!jwt) return;
+    setIsLoggedIn(true);
+    getUserInfo();
+  }, []);
+
+  const getUserInfo = () => {
+    getUser(localStorage.getItem("jwt"))
+      .then(({ data: { user } }) => {
+        setUserInfo(user);
+      })
+      .catch((err) => {
+        console.log(err?.response?.data?.message);
+        doLogout();
+        alert(`Unable to fetch user info: ${err?.response?.data?.message}`);
+      });
+  };
 
   const handleRegistration = (userData, apiToCall = registerUser) => {
     apiToCall(userData)
@@ -21,6 +36,7 @@ const App = () => {
         setIsLoggedIn(true);
         localStorage.setItem("jwt", data.token);
         onClose();
+        getUserInfo();
       })
       .catch((error) => {
         console.error(error);
@@ -41,9 +57,14 @@ const App = () => {
     formHandler(true);
   };
 
+  const doLogout = () => {
+    localStorage.clear();
+    setIsLoggedIn(false);
+  }
+
   return (
     <div className='app'>
-      <Header />
+      <Header userInfo={userInfo} isLoggedIn={isLoggedIn} doLogout={doLogout} />
       <Body
         isLoggedIn={isLoggedIn}
         onLogin={openForm(setIsLoginModalOpen)}

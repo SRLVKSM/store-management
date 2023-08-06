@@ -43,8 +43,6 @@ exports.loginUser = async (req, res) => {
   try {
     // Check if the user exists
     const user = await User.findOne({ email });
-    const userAll = await User.find();
-    console.log(userAll);
     if (!user) {
       return res.status(401).json({ message: 'Invalid user' });
     }
@@ -58,13 +56,24 @@ exports.loginUser = async (req, res) => {
     // Create and send a JWT token as a cookie
     const token = jwt.sign({ userId: user._id }, 'your_secret_key_here', { expiresIn: '1h' });
 
-    res.cookie('jwt', token, {
-      httpOnly: true, // Prevents JavaScript access to the cookie
-      maxAge: 3600000, // Expiry time in milliseconds (1 hour in this case)
-    });
-
-    res.json({ message: 'Login successful' });
+    res.json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ message: 'Failed to login', error: error.message });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  const userId = req.user;
+
+  try {
+    // Check if the user exists
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid user' });
+    }
+
+    res.json({ message: 'Get User info successful', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get user info', error: error.message });
   }
 };

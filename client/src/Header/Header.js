@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import RegisterForm from '../RegisterForm';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ userInfo, isLoggedIn, doLogout }) => {
   const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
 
@@ -26,7 +26,15 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div><h1>Store Management</h1></div>
+      <div className='header-content'>
+        <h1>Store Management</h1>
+        {isLoggedIn && (
+          <div className='header-right-content'>
+            <div>{`Hello ${userInfo.username}`}</div>
+            <div className='logout' onClick={doLogout}>Logout</div>
+          </div>
+        )}
+      </div>
       <RegisterForm
         isOpen={isRegisterModalOpen || isLoginModalOpen}
         onRequestClose={handleModalClose}
