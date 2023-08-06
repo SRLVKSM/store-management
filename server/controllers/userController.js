@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie');
 
 exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -28,7 +29,9 @@ exports.registerUser = async (req, res) => {
     // Save the user to the database
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    const token = jwt.sign({ userId: newUser._id }, 'your_secret_key_here', { expiresIn: '1h' });
+
+    res.status(201).json({ message: 'User registered successfully', token });
   } catch (error) {
     res.status(500).json({ message: 'Failed to register user', error: error.message });
   }
@@ -41,25 +44,36 @@ exports.loginUser = async (req, res) => {
     // Check if the user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid user' });
     }
 
     // Check if the password is correct
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid passowrd' });
     }
 
     // Create and send a JWT token as a cookie
     const token = jwt.sign({ userId: user._id }, 'your_secret_key_here', { expiresIn: '1h' });
 
-    res.cookie('jwt', token, {
-      httpOnly: true, // Prevents JavaScript access to the cookie
-      maxAge: 3600000, // Expiry time in milliseconds (1 hour in this case)
-    });
-
-    res.json({ message: 'Login successful' });
+    res.json({ message: 'Login successful', token });
   } catch (error) {
     res.status(500).json({ message: 'Failed to login', error: error.message });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  const userId = req.user;
+
+  try {
+    // Check if the user exists
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid user' });
+    }
+
+    res.json({ message: 'Get User info successful', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get user info', error: error.message });
   }
 };

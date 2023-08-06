@@ -3,12 +3,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cors({ origin: '*' }));
 
 // Connect to MongoDB
 const dbURI = 'mongodb://localhost:27017';
@@ -20,11 +22,14 @@ mongoose
 // Routes
 const authMiddleware = require('./server/middleware/auth');
 const userRoutes = require('./server/routes/userRoute');
+const userInfoRoutes = require('./server/routes/userInfoRoute');
 const storeItemRoutes = require('./server/routes/storeRoute');
 
 app.use('/api/store-items', authMiddleware);
+app.use('/api/user-info', authMiddleware);
 
 app.use('/api/users', userRoutes);
+app.use('/api/user-info', userInfoRoutes);
 app.use('/api/store-items', storeItemRoutes);
 
 // Define the port for the server
