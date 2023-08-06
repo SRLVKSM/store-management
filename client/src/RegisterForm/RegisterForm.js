@@ -15,7 +15,7 @@ const RegisterForm = ({ isOpen, onRequestClose, onRegister, onLogin, isLogin }) 
 
   const handleLogin = () => {
     // Handle login logic here
-    onLogin(email, password);
+    onLogin({email, password});
   };
 
   const handleClose = () => {
@@ -63,11 +63,11 @@ const RegisterForm = ({ isOpen, onRequestClose, onRegister, onLogin, isLogin }) 
           />
         </div>
         <div className='action'>
-          <button type="button" onClick={isLogin ? handleLogin : handleRegister}>
-            {isLogin ? 'Login' : 'Register'}
-          </button>
           <button type="button" onClick={handleClose}>
             Cancel
+          </button>
+          <button type="button" onClick={isLogin ? handleLogin : handleRegister}>
+            {isLogin ? 'Login' : 'Register'}
           </button>
         </div>
       </form>

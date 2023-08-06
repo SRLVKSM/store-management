@@ -1,34 +1,35 @@
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import Header from '../Header';
 import Body from "../Body";
 import RegisterForm from "../RegisterForm";
 import './App.css';
+import { loginUser, registerUser } from '../actions';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-  const handleRegistration = async (userData) => {
-    try {
-      // Replace the URL with the actual API endpoint for registration
-      console.log(userData);
-      const response = await axios.post('http://localhost:8000/api/users/register', userData);
-      console.log(response.data); // You can do something with the response data
-      setIsLoggedIn(true);
-      localStorage.setItem("token", response.data.token);
-      setIsRegisterModalOpen(false);
-    } catch (error) {
-      console.error(error);
-      // Handle error here
-    }
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) setIsLoggedIn(true);
+  }, [])
+
+  const handleRegistration = (userData, apiToCall = registerUser) => {
+    apiToCall(userData)
+      .then(({ data }) => {
+        setIsLoggedIn(true);
+        localStorage.setItem("jwt", data.token);
+        onClose();
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(error);
+      });
   };
 
-  const handleLogin = () => {
-    // Your login logic here
-    setIsLoggedIn(true);
-    setIsLoginModalOpen(false);
+  const handleLogin = (userData) => {
+    handleRegistration(userData, loginUser);
   };
 
   const onClose = () => {

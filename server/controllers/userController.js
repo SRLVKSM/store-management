@@ -31,13 +31,6 @@ exports.registerUser = async (req, res) => {
 
     const token = jwt.sign({ userId: newUser._id }, 'your_secret_key_here', { expiresIn: '1h' });
 
-    res.setHeader('Set-Cookie', cookie.serialize('jwt', token, {
-      httpOnly: true, // Prevents JavaScript access to the cookie
-      maxAge: 3600000, // Expiry time in milliseconds (1 hour in this case)
-      domain: 'localhost', // Set the domain to allow access from localhost and subdomains.localhost
-      path: '/', // Set the path to '/' to allow access from the whole domain
-    }));
-
     res.status(201).json({ message: 'User registered successfully', token });
   } catch (error) {
     res.status(500).json({ message: 'Failed to register user', error: error.message });
@@ -50,14 +43,16 @@ exports.loginUser = async (req, res) => {
   try {
     // Check if the user exists
     const user = await User.findOne({ email });
+    const userAll = await User.find();
+    console.log(userAll);
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid user' });
     }
 
     // Check if the password is correct
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid passowrd' });
     }
 
     // Create and send a JWT token as a cookie
