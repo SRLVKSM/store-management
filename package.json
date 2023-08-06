@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "install:all": "yarn && cd client && yarn",
+    "dev": "concurrently \"nodemon index.js\" \"cd client && yarn start\""
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +20,7 @@
     "mongoose": "^5.13.8"
   },
   "devDependencies": {
+    "concurrently": "^8.2.0",
     "nodemon": "^3.0.1"
   }
 }
